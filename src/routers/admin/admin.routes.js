@@ -1,7 +1,10 @@
 import express from 'express';
-import { registerAdmin } from '../../controllers/admin/index.controller.js';
+import { login, registerAdmin, logout } from '../../controllers/admin/index.controller.js';
 
 const router = express.Router();
+
+//middleware
+import {verifyJWT} from "../../middlewares/authAdmin.middleware.js";
 
 
 
@@ -9,6 +12,11 @@ const router = express.Router();
 
 //routes 
 router.post("/register", registerAdmin);
+router.post("/login", login);
+
+//secure routes
+router.post("/logout", verifyJWT ,logout)
+
 
 
 export default router;

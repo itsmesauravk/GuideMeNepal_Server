@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 
 const AdminSchema = new mongoose.Schema(
@@ -54,6 +55,48 @@ AdminSchema.pre("save", async function (next) {
   }
 
 })
+
+// for matching password
+AdminSchema.methods.matchPassword = async function (enteredPassword) {
+  const isMatch =  await bcrypt.compare(enteredPassword, this.password)
+  return isMatch
+}
+
+// wrong password counter
+AdminSchema.methods.wrongPassword = async function () {
+  this.securityMetadata.wrongPasswordCounter += 1
+  await this.save()
+}
+
+
+//for generating otp
+AdminSchema.methods.getOTP = function () {
+  const otp = Math.floor(100000 + Math.random() * 900000); //generating 6 digit otp
+  this.otp = {
+    code: otp,
+    expiresAt: Date.now() + 10 * 60 * 1000,
+  };
+  return otp;
+};
+
+
+
+//for generating access token
+AdminSchema.methods.getAccessToken = function () {
+  const aToken = jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+  });
+  return aToken;
+};
+
+//for generating refresh token
+AdminSchema.methods.getRefreshToken = function () {
+  const rToken = jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  });
+  return rToken;
+};
+
 
 
 
