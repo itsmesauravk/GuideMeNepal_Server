@@ -1,43 +1,71 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../db/ConnectDB.js";
+import User from "./user.model.js";
+import Guide from "./guide.model.js";
 
-
-
-const CustomizeBookingSchema = new mongoose.Schema(
+const CustomizeBooking = sequelize.define(
+  "CustomizeBooking",
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    guide: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Guide",
-      required: true,
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    bookingDetails: {
-      destination: { type: String },
-      startingLocation: { type: String },
-      numberOfAdults: { type: Number },
-      numberOfChildren: { type: Number },
-      estimatedDays: { type: Number },
-      estimatedPrice: { type: Number },
-    },
-    status: {
-      bookingStatus: {
-        type: String,
-        enum: ["pending", "accepted", "rejected"],
-        default: "pending",
+    userId: { 
+      type: DataTypes.INTEGER, 
+      allowNull: false,
+      references: {
+        model: 'users', 
+        key: 'id'
       },
-      travelStatus: {
-        type: String,
-        enum: ["not started", "started", "completed"],
-        default: "not started",
-      },
+      field: 'user' ,
+     
     },
-    platformLiability: { type: Boolean, default: false }, //this field is for whether the platform is liable (responsible) for the booking or not
+    guideId: { 
+      type: DataTypes.INTEGER, 
+      allowNull: false,
+      references: {
+        model: 'guides', 
+        key: 'id'
+      },
+      field: 'guide' 
+    },
+    destination: { type: DataTypes.STRING, allowNull: false },
+    startingLocation: { type: DataTypes.STRING },
+    accommodation: { type: DataTypes.STRING, defaultValue: null }, // Tourist accommodation
+    numberOfAdults: { type: DataTypes.INTEGER, allowNull: false },
+    numberOfChildren: { type: DataTypes.INTEGER, defaultValue: 0 },
+    estimatedDays: { type: DataTypes.INTEGER, allowNull: false },
+    estimatedPrice: { type: DataTypes.FLOAT },
+    startDate: { type: DataTypes.DATE },
+    endDate: { type: DataTypes.DATE },
+    bookingDate: { type: DataTypes.DATE },
+    bookingMessage: { type: DataTypes.TEXT, defaultValue: null },
+
+    bookingType: {
+      type: DataTypes.ENUM("customize", "group", "private"),
+      defaultValue: "customize",
+    },
+    bookingStatus: {
+      type: DataTypes.ENUM("pending", "canceled", "accepted", "rejected"),
+      defaultValue: "pending",
+    },
+    travelStatus: {
+      type: DataTypes.ENUM("not-started", "on-going", "completed"),
+      defaultValue: "not-started",
+    },
+
+    platformLiability: { type: DataTypes.BOOLEAN, defaultValue: false }, // Is platform responsible for booking?
   },
   { timestamps: true }
 );
 
-const CustomizeBooking = mongoose.model(
-  "CustomizeBooking",
-  CustomizeBookingSchema
-);
+CustomizeBooking.belongsTo(Guide, { foreignKey: 'guideId' });
+Guide.hasMany(CustomizeBooking, { foreignKey: 'guideId' });
+
+CustomizeBooking.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(CustomizeBooking, { foreignKey: 'userId' });
+
+
 
 export default CustomizeBooking;

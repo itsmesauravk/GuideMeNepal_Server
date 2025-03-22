@@ -4,7 +4,7 @@ import { ApiResponse } from '../../../utils/ApiResponse.js';
 import { ApiError } from '../../../utils/ApiError.js';
 import { StatusCodes } from 'http-status-codes';
 
-const registerAdmin = asyncHandler(async (req, res, next) => {
+const registerAdmin = asyncHandler(async (req, res) => {
     const { fullname, email, contact, password } = req.body;
 
     // Validate required fields
@@ -12,30 +12,36 @@ const registerAdmin = asyncHandler(async (req, res, next) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'All fields are required');
     }
 
-    // checking whether the email is already registered
-    const existingAdmin = await Admin.findOne({ email });
+    // Check if the email is already registered
+    const existingAdmin = await Admin.findOne({ where: { email } });
     if (existingAdmin) {
         throw new ApiError(StatusCodes.CONFLICT, 'Email already registered');
     }
 
-    // creating admin instance
-    const admin = new Admin({
+    // Create admin instance and save to the database
+    const admin = await Admin.create({
         fullname,
         email,
         contact,
         password,
+        securityMetadata: {
+            wrongPasswordCounter: 0,
+            isSuspended: false,
+        },
+        otp: {
+            code: null,
+            expiresAt: null,
+        },
+        refreshToken: null,
     });
-
-    // Save admin to the database
-    await admin.save();
 
     if (!admin) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Failed to create admin');
     }
 
-    // Exclude sensitive fields in response
+    // for response of created admin
     const responseAdmin = {
-        id: admin._id,
+        id: admin.id,
         fullname: admin.fullname,
         email: admin.email,
         contact: admin.contact,

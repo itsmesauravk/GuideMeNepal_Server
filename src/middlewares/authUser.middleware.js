@@ -1,10 +1,10 @@
-import Admin from "../models/admin.model.js";
+import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
-const generateAccessAndRefreshToken = async(admin) => {
-    const newAccessToken = admin.getAccessToken();
+const generateAccessAndRefreshToken = async(user) => {
+    const newAccessToken = user.getAccessToken();
     
     return {newAccessToken};
 }
@@ -12,7 +12,7 @@ const generateAccessAndRefreshToken = async(admin) => {
 const verifyJWT = asyncHandler(async (req, res, next) => {
     try {
        
-        const accessToken = req.cookies?.accessToken || req.headers?.authorization?.split(" ")[1];
+        const accessToken = req.cookies?.userToken || req.headers?.authorization?.split(" ")[1]
        
 
         if (!accessToken) {
@@ -22,35 +22,35 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
                 throw new ApiError(401, "Unauthorized request");
             }
 
-            // Verify refresh token and get admin
+            // Verify refresh token and get user
             const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-            const admin = await Admin.findById(decoded?.id).select("-password -refreshToken -securityMetadata");
+            const user = await User.findById(decoded?.id).select("-password -refreshToken -securityMetadata");
 
-            if (!admin) {
+            if (!user) {
                 throw new ApiError(401, "Invalid Request");
             }
 
             // Generate new access token and refresh token
-            const {newAccessToken} = await generateAccessAndRefreshToken(admin);
+            const {newAccessToken} = await generateAccessAndRefreshToken(user);
             
            res.cookie("accessToken", newAccessToken, {httpOnly: true, expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1)}); //1 days
 
-            req.user = admin;
+            req.user = user;
             return next();
         }
 
         // Verify access token
         const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
         
-        // Get admin without sensitive fields
-        const admin = await Admin.findById(decoded?.id)
+        // Get user without sensitive fields
+        const user = await Admin.findById(decoded?.id)
             .select("-password -refreshToken -securityMetadata");
 
-        if (!admin) {
+        if (!user) {
             throw new ApiError(401, "Invalid access token");
         }
 
-        req.user = admin;
+        req.user = user;
         next();
         
     } catch (error) {

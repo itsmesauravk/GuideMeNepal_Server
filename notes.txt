@@ -1,0 +1,4 @@
+
+setup for postgreSQL database
+
+    npm install express sequelize pg pg-hstore dotenv

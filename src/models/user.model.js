@@ -1,36 +1,96 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import {sequelize} from "../db/ConnectDB.js";
+import jwt from "jsonwebtoken";
+import slug from "slug";
 
 
-const UserSchema = new mongoose.Schema(
+const User = sequelize.define(
+  "User",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    fullName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      required: true,
+    },
+    slug:{
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique:true
+    },
     email: {
-      type: String,
+      type: DataTypes.STRING,
+      allowNull: false,
       required: true,
       unique: true,
-      lowercase: true,
-      trim: true,
+      validate: {
+        isEmail: true,
+        isLowercase: true,
+      },
+      set(value) {
+        this.setDataValue("email", value.toLowerCase().trim());
+      },
     },
-    password: { type: String, required: true },
-    contact: { type: String, required: true },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    profilePicture:{
+      type:DataTypes.STRING,
+      default:null
+    },
+    contact: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
     authMethod: {
-      type: String,
-      enum: ["email", "google", "facebook"],
-      default: "email",
+      type: DataTypes.ENUM("email", "google", "facebook"),
+      defaultValue: "email",
     },
-    otp: { code: String, expiresAt: Date },
-    refreshToken: { type: String },
-    securityMetadata: {
-      lastPassword: String,
-      wrongPasswordCounter: { type: Number, default: 0 },
-      isSuspended: { type: Boolean, default: false },
+    otpCode: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
-    bookingHistory: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "CustomizeBooking" },
-    ],
+    otpExpiresAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    refreshToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    lastActiveAt:{
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    isSuspended: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    tableName: "users",
+  }
 );
 
-const User = mongoose.model("User", UserSchema);
+// Define associations
+User.associate = (models) => {
+  User.hasMany(models.CustomizeBooking, {
+    foreignKey: "userId",
+    as: "bookingHistory",
+  });
+};
+
+//for generating access token
+User.prototype.getAccessToken = function () {
+  return jwt.sign({ id: this.id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+  });
+};
 
 export default User;

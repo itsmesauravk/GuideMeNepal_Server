@@ -1,20 +1,23 @@
 
 import app from "./app.js";
-import ConnectDB from "./db/ConnectDB.js";
+import { sequelize } from "./db/ConnectDB.js";
 
 const PORT = process.env.PORT || 4000;
 
 
-    
-
-ConnectDB()
-.then(() => {
+// Connect to the database
+sequelize.sync()
+  .then(() => {
+    console.log('Database synced successfully');
     app.listen(PORT ||4000, () => {
         console.log(` 🚀 Server is running on port ==> ${PORT} `);
     })
-})
-.catch((err) => {
-    console.log(" ⛔ Connection Problem");
-})
+  })
+  .catch((error) => {
+    console.log(" ⛔ Connection Problem", error);
+  });
+
+
+
 
 
