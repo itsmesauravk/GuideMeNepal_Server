@@ -37,7 +37,7 @@ const login = asyncHandler(async (req, res) => {
     const isMatch = await admin.matchPassword(password);
     if (!isMatch) {
         // Increment wrong password counter
-        await admin.wrongPassword();
+        // await admin.wrongPassword();
         throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid credentials");
     }
 
@@ -49,6 +49,14 @@ const login = asyncHandler(async (req, res) => {
     // Generate tokens
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(admin);
 
+    //response admin data
+    const adminData = {
+        id: admin.id,
+        email: admin.email,
+        name: admin.fullname,
+        role: "admin",
+    };
+
    
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
@@ -59,8 +67,8 @@ const login = asyncHandler(async (req, res) => {
    
     res.status(StatusCodes.OK).json(
         new ApiResponse(StatusCodes.OK, "Login successful", {
-            accessToken,
-           
+            jwt:accessToken,
+           user: adminData,
         })
     );
 });

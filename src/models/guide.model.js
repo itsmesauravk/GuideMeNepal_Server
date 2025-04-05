@@ -78,6 +78,7 @@ const Guide = sequelize.define(
     guidingAreas:{
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull:false,
+      
     },
     selfVideo:{
       type: DataTypes.STRING,
@@ -107,7 +108,7 @@ const Guide = sequelize.define(
     availability: {
       type: DataTypes.JSONB, 
       defaultValue: {
-        isActivate: false,
+        isActivate: true,
         isAvailable: true,
       },
     },

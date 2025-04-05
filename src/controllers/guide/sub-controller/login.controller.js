@@ -50,13 +50,14 @@ const loginGuide = asyncHandler(async (req, res) => {
     //response guide data
     const guideData = {
         id: guide.id,
-        fullname: guide.fullname,
+        name: guide.fullname,
         email: guide.email,
-        profilePhoto: guide.profilePhoto,
+        image: guide.profilePhoto,
+        role:"guide",
         verified: guide.verified,
         registrationStatus: guide.registrationStatus,
         firstTimeLogin: guide.firstTimeLogin,
-        guideToken
+        
     };
 
     if(!guideData.firstTimeLogin){
@@ -69,7 +70,7 @@ const loginGuide = asyncHandler(async (req, res) => {
    
 
     return res.status(StatusCodes.OK).json(
-        new ApiResponse(StatusCodes.OK, "Guide logged in successfully",guideData
+        new ApiResponse(StatusCodes.OK, "Guide logged in successfully",{user:guideData, jwt:guideToken}
         )
     );
 });

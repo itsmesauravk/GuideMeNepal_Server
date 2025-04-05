@@ -4,7 +4,8 @@ import { ApiError } from "../../../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import slug from "slug";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
+
 
 
 
@@ -164,7 +165,86 @@ const getAllDistricts = asyncHandler(async (req, res) => {
     );
 });
 
+
+const getSingleDistrict = asyncHandler(async (req, res) => {
+    const { slug } = req.params;
+
+   
+
+    if(!slug) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'District slug is required');
+    }
+
+    const district = await District.findOne({
+        where: { slug },
+        attributes: ['id', 'name', 'slug', 'description', 'image']
+    });
+
+    district.increment('views');
+    await district.save();
+    
+    
+    if (!district) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'District not found');
+    }
+    
+    res.status(StatusCodes.OK).json(
+        new ApiResponse(StatusCodes.OK, 'District found', district)
+    );
+});
+
+
+//get popular districts
+const getPopularDistricts = asyncHandler(async (req, res) => {
+    try {
+        const districts = await District.findAll({
+            attributes: [
+                'id', 
+                'name', 
+                'slug', 
+                'description', 
+                'image', 
+                'views',
+                'guideRegistered',
+                'bookings',
+                [
+                    Sequelize.literal(
+                        `(views * 0.3 + "guideRegistered" * 0.35 + bookings * 0.35)`
+                    ), 
+                    'popularityScore'
+                ]
+            ],
+            where: {
+                [Op.or]: [
+                    { views: { [Op.gt]: 0 } },
+                    { guideRegistered: { [Op.gt]: 0 } },
+                    { bookings: { [Op.gt]: 0 } }
+                ],
+                isActive: true // Only fetch active districts
+            },
+            order: [
+                [Sequelize.literal('"popularityScore"'), 'DESC']
+            ],
+            limit: 7
+        });
+
+        return res.status(StatusCodes.OK).json(
+            new ApiResponse(StatusCodes.OK, "Popular districts found", districts)
+        );
+    } catch (error) {
+        console.error('Error fetching popular districts:', error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+            new ApiResponse(
+                StatusCodes.INTERNAL_SERVER_ERROR, 
+                "Error fetching popular districts", 
+                null
+            )
+        );
+    }
+});
+
+
   
 
 
-export { addSingleDistrict, addBulkDistrict, getAllDistricts };
+export { addSingleDistrict, addBulkDistrict, getAllDistricts, getSingleDistrict, getPopularDistricts };

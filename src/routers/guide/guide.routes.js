@@ -1,4 +1,4 @@
-import { registerGuide, loginGuide, firstTimeLoginPasswordChange, getPopularGuides, getSingleGuideDetails } from "../../controllers/guide/index.controller.js";
+import { registerGuide, loginGuide, firstTimeLoginPasswordChange, getPopularGuides, getSingleGuideDetails, getGuides } from "../../controllers/guide/index.controller.js";
 import { Router } from "express";
 import { upload } from "../../middlewares/multer.middleware.js";
 import { getSingleRequest } from "../../controllers/admin/index.controller.js";
@@ -22,6 +22,7 @@ router.get("/get-single-request/:id", getSingleRequest);
 // client side routes
 router.get("/get-popular-guides", getPopularGuides)
 router.get("/single-guide-details/:slug", getSingleGuideDetails)
+router.get("/get-guides", getGuides)
 
 
 // Export the router

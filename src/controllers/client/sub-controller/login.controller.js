@@ -34,6 +34,15 @@ const loginUser = asyncHandler(async (req, res) => {
     //update last active
     existingUser.lastActiveAt = new Date()
     await existingUser.save()
+
+    const userData = {
+        id: existingUser.id,
+        name: existingUser.fullName,
+        email: existingUser.email,
+        role: "user",
+        image: existingUser.profilePicture,
+        authMethod: existingUser.authMethod
+    }
    
 
     res.cookie("userToken", userToken, {
@@ -42,11 +51,8 @@ const loginUser = asyncHandler(async (req, res) => {
     });
 
     res.status(StatusCodes.ACCEPTED).json(new ApiResponse(StatusCodes.ACCEPTED, "Login Successfull", {
-        id: existingUser.id,
-        fullName: existingUser.fullName,
-        email: existingUser.email,
-        authMethod: existingUser.authMethod,
-        userToken
+       jwt:userToken,
+       user:userData
     }));
 
 

@@ -31,6 +31,7 @@ const CustomizeBooking = sequelize.define(
       field: 'guide' 
     },
     destination: { type: DataTypes.STRING, allowNull: false },
+    contact: { type: DataTypes.STRING, allowNull: false },
     startingLocation: { type: DataTypes.STRING },
     accommodation: { type: DataTypes.STRING, defaultValue: null }, // Tourist accommodation
     numberOfAdults: { type: DataTypes.INTEGER, allowNull: false },
@@ -41,19 +42,22 @@ const CustomizeBooking = sequelize.define(
     endDate: { type: DataTypes.DATE },
     bookingDate: { type: DataTypes.DATE },
     bookingMessage: { type: DataTypes.TEXT, defaultValue: null },
+    cancelMessage: { type: DataTypes.TEXT, defaultValue: null },
 
     bookingType: {
       type: DataTypes.ENUM("customize", "group", "private"),
       defaultValue: "customize",
     },
     bookingStatus: {
-      type: DataTypes.ENUM("pending", "canceled", "accepted", "rejected"),
+      type: DataTypes.ENUM("pending", "cancelled", "accepted", "rejected"),
       defaultValue: "pending",
     },
     travelStatus: {
       type: DataTypes.ENUM("not-started", "on-going", "completed"),
       defaultValue: "not-started",
     },
+
+    travelLoations: { type: DataTypes.JSON, defaultValue: null }, // Travel locations
 
     platformLiability: { type: DataTypes.BOOLEAN, defaultValue: false }, // Is platform responsible for booking?
   },
