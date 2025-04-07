@@ -33,6 +33,7 @@
     "prettier": "^3.4.2",
     "sequelize": "^6.37.5",
     "slug": "^10.0.0",
+    "socket.io": "^4.8.1",
     "uploadthing": "^7.5.1"
   }
 }

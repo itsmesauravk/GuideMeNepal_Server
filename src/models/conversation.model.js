@@ -1,25 +1,91 @@
-import mongoose, { mongo } from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../db/ConnectDB.js";
 
-
-
-const ConversationSchema = new mongoose.Schema(
+const Conversation = sequelize.define(
+  "Conversation",
   {
-    jparticipants: [
-      {
-        participant: {
-          type: mongoose.Schema.Types.ObjectId,
-          refPath: "participants.participantModel",
-        },
-        participantModel: { type: String, enum: ["User", "Guide"] },
-      },
-    ],
-
-    lastMessage: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
-    isGroupChat: { type: Boolean, default: false },
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    isGroupChat: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    groupName: {
+      type: DataTypes.STRING,
+      allowNull: true, // Null for private chats, required for group chats
+    },
+    groupImage: {
+      type: DataTypes.STRING,
+      allowNull: true, // Null for private chats, required for group chats
+    },
+    lastMessage: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    // We'll handle participants and lastMessage through associations
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    tableName: "conversations",
+  }
 );
 
-const Conversation = mongoose.model("Conversation", ConversationSchema);
+//  Participant -> join table for many-to-many relationships 
+ const Participant = sequelize.define(
+  "Participant",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    participantId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    participantModel: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: [["User", "Guide"]],
+      },
+    },
+    conversationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "conversations",
+        key: "id",
+      },
+    },
+  },
+  {
+    timestamps: true,
+    tableName: "participants",
+    indexes: [
+      {
+        fields: ["participantId", "participantModel", "conversationId"],
+        unique: true,
+      },
+    ],
+  }
+);
 
-export default Conversation;
+
+// One conversation has many participants
+Conversation.hasMany(Participant, {
+  foreignKey: 'conversationId',
+  as: 'participants'
+});
+
+// A participant belongs to one conversation
+Participant.belongsTo(Conversation, {
+  foreignKey: 'conversationId',
+  as: 'conversation'
+});
+
+
+export { Conversation, Participant };

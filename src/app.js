@@ -11,7 +11,7 @@ import session from 'express-session';
 
 import './controllers/client/sub-controller/oauthlogin.controller.js';
 
-const app = express();
+import { app } from './socket/socket.js';
 
 app.use(cors({
     origin:["http://localhost:3000","http://localhost:3001"],
@@ -45,6 +45,7 @@ import clientRoutes from "./routers/client/client.route.js";
 import guideRoutes from "./routers/guide/guide.routes.js";
 import oauthRoute from  "./routers/client/oauth.route.js";
 import { commonRouter } from './routers/common/common.route.js';
+import { messageRouter } from './routers/message/message.route.js';
 
 
 
@@ -57,7 +58,7 @@ app.use('/api/v1/client', clientRoutes);
 app.use('/api/v1/guide', guideRoutes);
 app.use('/auth', oauthRoute);
 app.use('/api/v1/common', commonRouter);
-
+app.use('/api/v1/message', messageRouter);
 
 
 //tesing routes

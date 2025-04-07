@@ -1,32 +1,64 @@
-import mongoose from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../db/ConnectDB.js";
+import { Conversation } from "./conversation.model.js";
 
-
-
-const MessageSchema = new mongoose.Schema(
+const Message = sequelize.define(
+  "Message",
   {
-    conversation: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Conversation",
-      required: true,
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      refPath: "senderModel",
-      required: true,
+    conversationId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "conversations",
+        key: "id",
+      },
     },
-    senderModel: { type: String, enum: ["User", "Guide"] },
-    content: { type: String, required: true },
+    senderId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    senderModel: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isIn: [["User", "Guide"]],
+      },
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     contentType: {
-      type: String,
-      enum: ["text", "image", "video", "file"],
-      default: "text",
+      type: DataTypes.STRING,
+      defaultValue: "text",
+      validate: {
+        isIn: [["text", "image", "video", "file"]],
+      },
     },
-    isRead: { type: Boolean, default: false },
-    metadata: mongoose.Schema.Types.Mixed,
+    isRead: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    metadata: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    tableName: "messages",
+  }
 );
 
-const Message = mongoose.model("Message", MessageSchema);
+// Define the relationship with Conversation model
+Message.belongsTo(Conversation, {
+  foreignKey: "conversationId",
+  as: "conversation",
+});
 
-export default Message;
+export { Message}
