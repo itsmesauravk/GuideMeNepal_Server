@@ -1,5 +1,6 @@
 import { createCustomizeBooking, cancelCustomizeBookingUser, rejectCustomizeBookingGuide, acceptCustomizeBookingGuide } from "./sub-controller/booking.controller.js";
 import { getBookings, getOngoingBookings } from "./sub-controller/getBookings.controller.js";
+import { getAllUsers } from "./sub-controller/getAllUsers.controller.js";
 
 //districts
 import { addSingleDistrict, addBulkDistrict, getAllDistricts, getSingleDistrict, getPopularDistricts } from "./sub-controller/district.controller.js";
@@ -18,5 +19,8 @@ export {
     addBulkDistrict,
     getAllDistricts,
     getPopularDistricts,
-    getSingleDistrict
+    getSingleDistrict,
+
+    // users
+    getAllUsers
 }
