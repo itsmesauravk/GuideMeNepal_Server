@@ -2,7 +2,14 @@ import express from "express";
 
 const router = express.Router();
 
-import { acceptCustomizeBookingGuide, addBulkDistrict, addSingleDistrict, cancelCustomizeBookingUser, createCustomizeBooking, getAllDistricts, getAllUsers, getBookings, getOngoingBookings, getPopularDistricts, getSingleDistrict, rejectCustomizeBookingGuide } from "../../controllers/common/index.js";
+import { acceptCustomizeBookingGuide,
+    addBulkDistrict, addSingleDistrict,
+    cancelCustomizeBookingUser, completeBookingGuide,
+    completeBookingUser,
+    createCustomizeBooking, createGuideReview, getAllDistricts, getAllUsers,
+    getBookings, getOngoingBookings, getPopularDistricts,
+        getSingleDistrict, rejectCustomizeBookingGuide 
+    } from "../../controllers/common/index.js";
 
 
 //secure routes
@@ -24,6 +31,13 @@ router.get("/get-popular-districts", getPopularDistricts);
 
 //users
 router.get("/get-all-users/:userId", getAllUsers);
+
+//booking complete
+router.patch("/complete-booking-guide/:bookingId", completeBookingGuide);
+router.patch("/complete-booking-user/:bookingId", completeBookingUser);
+
+//reviews
+router.post("/create-guide-review", createGuideReview);
 
 
 export { router as commonRouter };

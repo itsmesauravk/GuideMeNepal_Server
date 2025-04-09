@@ -5,6 +5,14 @@ import { getAllUsers } from "./sub-controller/getAllUsers.controller.js";
 //districts
 import { addSingleDistrict, addBulkDistrict, getAllDistricts, getSingleDistrict, getPopularDistricts } from "./sub-controller/district.controller.js";
 
+//booking complete 
+import { completeBookingGuide, completeBookingUser } from "./sub-controller/completeBooking.controller.js";
+
+//reviews
+import { createGuideReview } from "./sub-controller/guideReviews.controller.js";
+
+
+
 
 export {
     createCustomizeBooking,
@@ -22,5 +30,12 @@ export {
     getSingleDistrict,
 
     // users
-    getAllUsers
+    getAllUsers,
+
+    // booking complete
+    completeBookingGuide,
+    completeBookingUser,
+
+    //reviews
+    createGuideReview
 }

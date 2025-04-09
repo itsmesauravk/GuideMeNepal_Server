@@ -92,7 +92,7 @@ const getOngoingBookings = asyncHandler(async(req, res) => {
     // Update filter conditions
     whereClause.bookingStatus = "accepted";
     whereClause.travelStatus = {
-        [Op.or]: ["not-started", "on-going"]
+        [Op.or]: ["not-started", "on-going", "guide-completed"]
     };
     
     // Execute query with filters
@@ -114,6 +114,23 @@ const getOngoingBookings = asyncHandler(async(req, res) => {
                 attributes: ['id', 'slug', 'fullName', 'email', 'profilePicture']
             }]
         });
+    }
+
+    if(!booking){
+        throw new ApiError(StatusCodes.NOT_FOUND, "No ongoing booking found")
+    }
+
+    //for automatically updating the travel status of the booking
+    const bookingStartDate = booking?.startDate;
+    const todaysDate = new Date();
+    const dateDiff = bookingStartDate - todaysDate;
+    const diffDays = Math.ceil(dateDiff / (1000 * 3600 * 24)); // Difference in days
+    if(booking.travelStatus === "not-started"){
+        if(diffDays < 0){
+            booking.travelStatus = "on-going";
+            await booking.save();
+        }
+
     }
     
     return res.status(StatusCodes.OK).json(

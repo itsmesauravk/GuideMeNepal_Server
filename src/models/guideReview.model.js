@@ -1,21 +1,65 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { DataTypes } from "sequelize";
+import { sequelize } from "../db/ConnectDB.js";
 
-
-
-const GuideReviewSchema = new mongoose.Schema(
+const GuideReview = sequelize.define(
+  "GuideReview",
   {
-    guide: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Guide",
-      required: true,
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    rating: { type: Number, min: 1, max: 5, required: true },
-    comments: { type: String },
+    guideId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "guides", // table name
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "users", // table name
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+    rating: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      validate: {
+        min: 1.0,
+        max: 5.0,
+      },
+    },
+    destination: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    comments: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    tableName: "guide_reviews",
+  }
 );
 
-const GuideReview = mongoose.model("GuideReview", GuideReviewSchema);
+// Associations
+GuideReview.associate = (models) => {
+  GuideReview.belongsTo(models.User, {
+    foreignKey: "userId",
+    as: "user",
+  });
+  GuideReview.belongsTo(models.Guide, {
+    foreignKey: "guideId",
+    as: "guide",
+  });
+};
 
 export default GuideReview;

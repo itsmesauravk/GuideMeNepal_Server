@@ -52,8 +52,9 @@ const CustomizeBooking = sequelize.define(
       type: DataTypes.ENUM("pending", "cancelled", "accepted", "rejected"),
       defaultValue: "pending",
     },
+
     travelStatus: {
-      type: DataTypes.ENUM("not-started", "on-going", "completed"),
+      type: DataTypes.ENUM("not-started", "on-going", "guide-completed" ,"completed"),
       defaultValue: "not-started",
     },
 

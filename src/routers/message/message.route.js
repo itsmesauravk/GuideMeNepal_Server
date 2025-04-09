@@ -10,4 +10,4 @@ messageRouter.get("/get-conversations/:userId/:userType", getAllConversationUser
 messageRouter.get("/get-messages/:conversationId/:userId/:userModel", getMessagesByConversation)
 
 
-export { messageRouter };
+export { messageRouter };   
