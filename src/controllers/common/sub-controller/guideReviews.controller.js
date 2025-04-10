@@ -33,10 +33,35 @@ const createGuideReview = asyncHandler(async (req, res) => {
   }
 
   return res.status(StatusCodes.CREATED).json(
-    new ApiResponse(StatusCodes.CREATED, "Review created successfully", review)
+    new ApiResponse(StatusCodes.CREATED, "Feedback submitted successfully", review)
   );
 });
 
+//get review for a guide
+const getGuideReviews = asyncHandler(async (req, res) => {
+  const { guideId } = req.params;
+
+  const guideReviews = await GuideReview.findAll({
+    where: { guideId: guideId },
+    attributes: ["id", "comments", "rating","destination" ,"createdAt"],
+    include: [
+        {
+            model: User,
+            as: "user",
+            attributes: ["fullName", "profilePicture"],
+        },
+    ],
+});
+
+const totalReviews = guideReviews.length;
+const averageRating = guideReviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews || 0;
+
+return res.status(StatusCodes.OK).json(
+    new ApiResponse(StatusCodes.OK, "Guide reviews fetched successfully", { reviews:guideReviews, total:totalReviews, average:averageRating })
+);
+
+})
 
 
-export {createGuideReview}
+
+export {createGuideReview, getGuideReviews}

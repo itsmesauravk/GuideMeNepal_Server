@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/ConnectDB.js";
+import Guide from "./guide.model.js";
+import User from "./user.model.js";
 
 const GuideReview = sequelize.define(
   "GuideReview",
@@ -40,7 +42,7 @@ const GuideReview = sequelize.define(
       allowNull: false,
     },
     comments: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
   },
@@ -49,6 +51,16 @@ const GuideReview = sequelize.define(
     tableName: "guide_reviews",
   }
 );
+
+GuideReview.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+GuideReview.belongsTo(Guide, {
+  foreignKey: "guideId",
+  as: "guide",
+});
 
 // Associations
 GuideReview.associate = (models) => {
@@ -61,5 +73,7 @@ GuideReview.associate = (models) => {
     as: "guide",
   });
 };
+
+
 
 export default GuideReview;

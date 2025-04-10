@@ -5,6 +5,8 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { ApiError } from "../../../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
+import GuideReview from "../../../models/guideReview.model.js";
+import User from "../../../models/user.model.js";
 
 
 
@@ -27,12 +29,14 @@ const getSingleGuideDetails = asyncHandler(async (req, res) => {
         attributes: selectFields ? selectFields : { exclude: [...defaultExclude, ...excludeFields] }
     });
 
+    
+
     if (!guide) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Unable to find the guide");
     }
 
     return res.status(StatusCodes.OK).json(
-        new ApiResponse(StatusCodes.OK, "Guide Found", guide)
+        new ApiResponse(StatusCodes.OK, "Guide Found", guide )
     );
 });
 
