@@ -12,7 +12,7 @@ import { StatusCodes } from "http-status-codes";
 const getMessagesByConversation =asyncHandler( async (req, res) => {
 
       const { conversationId,userId, userModel } = req.params;
-      const { page = 1, limit = 40 } = req.query;
+      const { page = 1, limit = 12 } = req.query;
       const offset = (page - 1) * limit;
       
       

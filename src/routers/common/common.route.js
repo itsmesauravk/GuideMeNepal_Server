@@ -10,7 +10,7 @@ import { acceptCustomizeBookingGuide,
     getBookings, getOngoingBookings, getPopularDistricts,
         getSingleDistrict, rejectCustomizeBookingGuide 
     } from "../../controllers/common/index.js";
-import { getGuideReviews } from "../../controllers/common/sub-controller/guideReviews.controller.js";
+import { getGuideReviews, getLatestGuideReviews } from "../../controllers/common/sub-controller/guideReviews.controller.js";
 
 
 //secure routes
@@ -40,6 +40,7 @@ router.patch("/complete-booking-user/:bookingId", completeBookingUser);
 //reviews
 router.post("/create-guide-review", createGuideReview);
 router.get("/get-guide-reviews/:guideId", getGuideReviews);
+router.get("/latest-guide-reviews", getLatestGuideReviews)
 
 
 export { router as commonRouter };

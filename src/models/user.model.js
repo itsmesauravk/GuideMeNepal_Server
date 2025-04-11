@@ -47,6 +47,18 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: null,
     },
+    gender: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
+    dob:{
+      type: DataTypes.DATE,
+      defaultValue: null,
+    },
+    country:{
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
     authMethod: {
       type: DataTypes.ENUM("email", "google", "facebook"),
       defaultValue: "email",

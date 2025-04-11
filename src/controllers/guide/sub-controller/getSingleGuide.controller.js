@@ -29,14 +29,25 @@ const getSingleGuideDetails = asyncHandler(async (req, res) => {
         attributes: selectFields ? selectFields : { exclude: [...defaultExclude, ...excludeFields] }
     });
 
-    
+    const guideReviews = await GuideReview.findAll({
+        where: { guideId: guide.id },
+    });
+
+    const totalReviews = guideReviews.length;
+    const averageRating = guideReviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews || 0;
 
     if (!guide) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Unable to find the guide");
     }
 
+    const resposeData = {
+        ...guide.toJSON(),
+        totalReviews,
+        averageRating,
+    }
+
     return res.status(StatusCodes.OK).json(
-        new ApiResponse(StatusCodes.OK, "Guide Found", guide )
+        new ApiResponse(StatusCodes.OK, "Guide Found", resposeData )
     );
 });
 

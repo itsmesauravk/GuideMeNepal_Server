@@ -9,7 +9,7 @@ import { addSingleDistrict, addBulkDistrict, getAllDistricts, getSingleDistrict,
 import { completeBookingGuide, completeBookingUser } from "./sub-controller/completeBooking.controller.js";
 
 //reviews
-import { createGuideReview } from "./sub-controller/guideReviews.controller.js";
+import { createGuideReview,getGuideReviews, getLatestGuideReviews } from "./sub-controller/guideReviews.controller.js";
 
 
 
@@ -37,5 +37,6 @@ export {
     completeBookingUser,
 
     //reviews
-    createGuideReview
+    createGuideReview,
+    getLatestGuideReviews
 }
