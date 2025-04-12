@@ -12,6 +12,9 @@ import { completeBookingGuide, completeBookingUser } from "./sub-controller/comp
 import { createGuideReview,getGuideReviews, getLatestGuideReviews } from "./sub-controller/guideReviews.controller.js";
 
 
+//notification
+import { getAllNotification } from "./sub-controller/notification.controller.js";
+
 
 
 export {
@@ -38,5 +41,8 @@ export {
 
     //reviews
     createGuideReview,
-    getLatestGuideReviews
+    getLatestGuideReviews,
+
+    //notification
+    getAllNotification,
 }

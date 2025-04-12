@@ -7,6 +7,8 @@ import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { ApiError } from "../../../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import { Op } from "sequelize";
+import { getReceiverSocketId, io } from "../../../socket/socket.js";
+import Notification from "../../../models/notification.model.js";
 
 
 
@@ -63,6 +65,31 @@ const createCustomizeBooking = asyncHandler(async(req,res) =>{
             district.bookings += 1;
             await district.save();
         }
+
+         // 6 - create a notification for the user and guide
+    const reciverSocketId = getReceiverSocketId(customizeBooking.guideId);
+    const notification = await Notification.create({
+        title: "Booking Request",
+        description: `You have a new booking request for ${customizeBooking.destination}`,
+        notificationType: "booking",
+        reciver: "guide",
+        userId: customizeBooking.userId,
+        guideId: customizeBooking.guideId,
+        bookingId: customizeBooking.id,
+    });
+    const totalUnread = await Notification.count({
+        where: {
+            guideId: customizeBooking.guideId,
+            reciver: "guide",
+            isRead: false,
+        },
+    });
+
+
+    if (reciverSocketId) {
+        io.to(reciverSocketId).emit("newNotification", notification);
+        io.to(reciverSocketId).emit("notificationCount", totalUnread);
+    }
     
         return res.status(StatusCodes.CREATED).json(
             new ApiResponse(StatusCodes.CREATED, "Customize Booking Created", customizeBooking)
@@ -91,6 +118,34 @@ const cancelCustomizeBookingUser = asyncHandler(async(req,res) =>{
     customizeBooking.bookingStatus = "cancelled"
     await customizeBooking.save()
 
+     // 6 - create a notification for the user and guide
+     const reciverSocketId = getReceiverSocketId(customizeBooking.guideId);
+     const notification = await Notification.create({
+         title: "Booking Request Cancelled",
+         description: `Your booking request has been cancelled by ${customizeBooking.userId}`,
+         notificationType: "booking",
+         reciver: "guide",
+         userId: customizeBooking.userId,
+         guideId: customizeBooking.guideId,
+         bookingId: customizeBooking.id,
+     });
+     const totalUnread = await Notification.count({
+         where: {
+             guideId: customizeBooking.guideId,
+             reciver: "guide",
+             isRead: false,
+         },
+     });
+ 
+ 
+     if (reciverSocketId) {
+         io.to(reciverSocketId).emit("newNotification", notification);
+         io.to(reciverSocketId).emit("notificationCount", totalUnread);
+     }
+     
+
+    
+
     return res.status(StatusCodes.OK).json(
         new ApiResponse(StatusCodes.OK, "Customize Booking Canceled", customizeBooking)
     )
@@ -114,6 +169,32 @@ const rejectCustomizeBookingGuide = asyncHandler(async(req,res) =>{
 
     customizeBooking.bookingStatus = "rejected"
     await customizeBooking.save()
+
+     // 6 - create a notification for the user and guide
+     const reciverSocketId = getReceiverSocketId(customizeBooking.guideId);
+     const notification = await Notification.create({
+         title: "Booking Request Rejected",
+         description: `Your booking request for ${customizeBooking.destination} has been rejected by Guide`,
+         notificationType: "booking",
+         reciver: "user",
+         userId: customizeBooking.userId,
+         guideId: customizeBooking.guideId,
+         bookingId: customizeBooking.id,
+     });
+     const totalUnread = await Notification.count({
+         where: {
+             userId: customizeBooking.userId,
+             reciver: "user",
+             isRead: false,
+         },
+     });
+ 
+ 
+     if (reciverSocketId) {
+         io.to(reciverSocketId).emit("newNotification", notification);
+         io.to(reciverSocketId).emit("notificationCount", totalUnread);
+     }
+     
 
     return res.status(StatusCodes.OK).json(
         new ApiResponse(StatusCodes.OK, "Customize Booking Rejected", customizeBooking)
@@ -175,7 +256,32 @@ const acceptCustomizeBookingGuide = asyncHandler(async(req, res) => {
         await guide.save();
     }
 
-    // 6 - response with the booking details
+    // 6 - create a notification for the user and guide
+    const reciverSocketId = getReceiverSocketId(customizeBooking.userId);
+    const notification = await Notification.create({
+        title: "Booking Accepted",
+        description: `Your booking request has been accepted by ${guide.fullname}`,
+        notificationType: "booking",
+        reciver: "user",
+        userId: customizeBooking.userId,
+        guideId: customizeBooking.guideId,
+        bookingId: customizeBooking.id,
+    });
+    const totalUnread = await Notification.count({
+        where: {
+            userId: customizeBooking.userId,
+            reciver: "user",
+            isRead: false,
+        },
+    });
+
+
+    if (reciverSocketId) {
+        io.to(reciverSocketId).emit("newNotification", notification);
+        io.to(reciverSocketId).emit("notificationCount", totalUnread);
+    }
+
+    // 7 - response with the booking details
     return res.status(StatusCodes.OK).json(
         new ApiResponse(StatusCodes.OK, " Booking Accepted", customizeBooking)
     );

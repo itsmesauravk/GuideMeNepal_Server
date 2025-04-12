@@ -63,7 +63,7 @@ const createMessage =asyncHandler( async (req, res) => {
       { where: { id: conversationId } }
     );
 
-    console.log("for RTM conversation" , newConversation )
+    
 
     // for realtime chat 
     const reciverSocketId = getReceiverSocketId(reciverId);

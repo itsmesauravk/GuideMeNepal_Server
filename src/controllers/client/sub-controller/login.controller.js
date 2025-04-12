@@ -4,6 +4,8 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/ApiError.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { StatusCodes } from "http-status-codes";
+import Notification from "../../../models/notification.model.js";
+import { getReceiverSocketId, io } from "../../../socket/socket.js";
 
 
 
@@ -49,6 +51,22 @@ const loginUser = asyncHandler(async (req, res) => {
         httpOnly: true,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1), // 1 day
     });
+
+    //for notification
+    const notification = await Notification.create({
+        title: "Login Successfull",
+        description: "You have successfully logged in to your account",
+        notificationType: "auth",
+        reciver: "user",
+        userId: existingUser.id,   
+    })
+
+    //socket real time
+    const reciverSocketId = getReceiverSocketId(existingUser.id)
+    if(reciverSocketId){
+        io.to(reciverSocketId).emit("newNotification", notification)
+    }
+
 
     res.status(StatusCodes.ACCEPTED).json(new ApiResponse(StatusCodes.ACCEPTED, "Login Successfull", {
        jwt:userToken,
