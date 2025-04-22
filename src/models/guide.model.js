@@ -85,7 +85,7 @@ const Guide = sequelize.define(
       default:false
     },
     aboutMe:{
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull:false,
     },
     experiences:{
