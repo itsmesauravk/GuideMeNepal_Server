@@ -1,4 +1,5 @@
 import GuideReview from "../../../models/guideReview.model.js";
+import CustomizeBooking from "../../../models/customizeBooking.model.js";
 import User from "../../../models/user.model.js";
 import Guide from "../../../models/guide.model.js";
 
@@ -6,12 +7,14 @@ import { ApiError } from "../../../utils/ApiError.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { StatusCodes } from "http-status-codes";
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
+import Notification from "../../../models/notification.model.js";
+import { getReceiverSocketId, io } from "../../../socket/socket.js";
 
 
 //create a review 
 const createGuideReview = asyncHandler(async (req, res) => {
-  const {userId, guideId, rating, destination, comments } = req.body;
+  const {bookingId, userId, guideId, rating, destination, comments } = req.body;
 
 
   // Check if the guide exists
@@ -33,6 +36,42 @@ const createGuideReview = asyncHandler(async (req, res) => {
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create review");
   }
 
+  if(bookingId){
+
+    //update the booking reviewstatus to true
+    await CustomizeBooking.update(
+      { reviewstatus: true },  
+      { where: { id: bookingId } } 
+    );
+  }
+
+
+
+        // 6 - create a notification for the user and guide
+        const reciverSocketId = getReceiverSocketId(review.guideId);
+        const notification = await Notification.create({
+            title: "Review from User",
+            description: `You have received a new review from the user`,
+            notificationType: "review",
+            reciver: "guide",
+            userId: review.userId,
+            guideId: review.guideId,
+            
+        });
+        const totalUnread = await Notification.count({
+            where: {
+                guideId: review.guideId,
+                reciver: "guide",
+                isRead: false,
+            },
+        });
+    
+    
+        if (reciverSocketId) {
+            io.to(reciverSocketId).emit("newNotification", notification);
+            io.to(reciverSocketId).emit("notificationCount", totalUnread);
+        }
+
   return res.status(StatusCodes.CREATED).json(
     new ApiResponse(StatusCodes.CREATED, "Feedback submitted successfully", review)
   );
@@ -44,6 +83,7 @@ const getGuideReviews = asyncHandler(async (req, res) => {
 
   const guideReviews = await GuideReview.findAll({
     where: { guideId: guideId },
+    order: [['createdAt', 'DESC']],
     attributes: ["id", "comments", "rating","destination" ,"createdAt"],
     include: [
         {

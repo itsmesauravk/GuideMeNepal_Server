@@ -5,10 +5,10 @@ const router = express.Router();
 import { acceptCustomizeBookingGuide,
     addBulkDistrict, addSingleDistrict,
     cancelCustomizeBookingUser, completeBookingGuide,
-    completeBookingUser,
+
     createCustomizeBooking, createGuideReview, getAllDistricts, getAllNotification, getAllUsers,
     getBookings, getOngoingBookings, getPopularDistricts,
-        getSingleDistrict, rejectCustomizeBookingGuide 
+        getSingleDistrict, markAllNotificationAsRead, markNotificationAsRead, rejectCustomizeBookingGuide 
     } from "../../controllers/common/index.js";
 import { getGuideReviews, getLatestGuideReviews } from "../../controllers/common/sub-controller/guideReviews.controller.js";
 
@@ -35,7 +35,7 @@ router.get("/get-all-users/:userId", getAllUsers);
 
 //booking complete
 router.patch("/complete-booking-guide/:bookingId", completeBookingGuide);
-router.patch("/complete-booking-user/:bookingId", completeBookingUser);
+
 
 //reviews
 router.post("/create-guide-review", createGuideReview);
@@ -44,6 +44,8 @@ router.get("/latest-guide-reviews", getLatestGuideReviews)
 
 //notification
 router.get("/all-notifications/:userId/:reciver", getAllNotification);
+router.patch("/mark-notification-as-read/:notificationId", markNotificationAsRead);
+router.patch("/mark-all-notification-as-read/:userId/:reciver", markAllNotificationAsRead);
 
 
 export { router as commonRouter };

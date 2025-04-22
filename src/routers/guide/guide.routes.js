@@ -19,6 +19,7 @@ router.post("/login", loginGuide);
 router.post("/first-time-login-password-change", firstTimeLoginPasswordChange);
 router.get("/get-single-request/:id", getSingleRequest);
 
+
 // client side routes
 router.get("/get-popular-guides", getPopularGuides)
 router.get("/single-guide-details/:slug", getSingleGuideDetails)
