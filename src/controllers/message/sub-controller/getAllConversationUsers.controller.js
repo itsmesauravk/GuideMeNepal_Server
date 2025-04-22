@@ -73,13 +73,13 @@ const getAllConversationUsers = asyncHandler(async (req, res) => {
     
     // Fetch user details
     const users = userIds.length > 0 ? await User.findAll({
-        attributes: ['id', 'fullName', 'profilePicture'], // Adjust fields as per your User model
+        attributes: ['id', 'fullName', 'profilePicture', 'slug'], 
         where: { id: { [Op.in]: userIds } }
     }) : [];
     
     // Fetch guide details
     const guides = guideIds.length > 0 ? await Guide.findAll({
-        attributes: ['id', 'fullname', 'profilePhoto'], // Adjust fields as per your Guide model
+        attributes: ['id', 'fullname', 'profilePhoto', 'slug'], 
         where: { id: { [Op.in]: guideIds } }
     }) : [];
     
@@ -90,6 +90,7 @@ const getAllConversationUsers = asyncHandler(async (req, res) => {
             id: user.id,
             name: user.fullName,
             profilePicture: user.profilePicture,
+            slug: user.slug,
             type: 'User'
         };
     });
@@ -100,6 +101,7 @@ const getAllConversationUsers = asyncHandler(async (req, res) => {
             id: guide.id,
             name: guide.fullname,
             profilePicture: guide.profilePhoto,
+            slug: guide.slug,
             type: 'Guide'
         };
     });

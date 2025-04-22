@@ -52,6 +52,7 @@ const createCustomizeBooking = asyncHandler(async(req,res) =>{
             bookingDate,
             bookingMessage,
             bookingType,
+            reviewstatus:false,
             platformLiability: true
         })
 

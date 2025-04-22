@@ -6,14 +6,14 @@ import { getAllUsers } from "./sub-controller/getAllUsers.controller.js";
 import { addSingleDistrict, addBulkDistrict, getAllDistricts, getSingleDistrict, getPopularDistricts } from "./sub-controller/district.controller.js";
 
 //booking complete 
-import { completeBookingGuide, completeBookingUser } from "./sub-controller/completeBooking.controller.js";
+import { completeBookingGuide } from "./sub-controller/completeBooking.controller.js";
 
 //reviews
 import { createGuideReview,getGuideReviews, getLatestGuideReviews } from "./sub-controller/guideReviews.controller.js";
 
 
 //notification
-import { getAllNotification } from "./sub-controller/notification.controller.js";
+import { getAllNotification, markNotificationAsRead, markAllNotificationAsRead } from "./sub-controller/notification.controller.js";
 
 
 
@@ -37,7 +37,6 @@ export {
 
     // booking complete
     completeBookingGuide,
-    completeBookingUser,
 
     //reviews
     createGuideReview,
@@ -45,4 +44,6 @@ export {
 
     //notification
     getAllNotification,
+    markNotificationAsRead,
+    markAllNotificationAsRead,
 }
