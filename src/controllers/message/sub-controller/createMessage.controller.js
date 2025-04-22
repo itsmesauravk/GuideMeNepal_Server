@@ -11,7 +11,7 @@ import { getReceiverSocketId, io } from '../../../socket/socket.js';
 // Create a new message
 const createMessage =asyncHandler( async (req, res) => {
  
-    const { conversationId, senderId, senderType, reciverId, reciverType ,content, contentType = 'text', metadata } = req.body;
+    const { conversationId, senderId, senderModel, reciverId, reciverType ,content, contentType = 'text', metadata } = req.body;
  
 
     if(!conversationId ){
@@ -32,7 +32,7 @@ const createMessage =asyncHandler( async (req, res) => {
       const pUser = await Participant.create({
         conversationId: newConversation.id,
         participantId: senderId,
-        participantModel: senderType
+        participantModel: senderModel
       });
       const pUser2 = await Participant.create({
         conversationId: newConversation.id,
@@ -50,7 +50,7 @@ const createMessage =asyncHandler( async (req, res) => {
       const newMessage = await Message.create({
         conversationId: newConversation.id,
         senderId,
-        senderModel: senderType,
+        senderModel,
         content,
         contentType,
         metadata,
@@ -95,7 +95,7 @@ const createMessage =asyncHandler( async (req, res) => {
     const newMessage = await Message.create({
       conversationId,
       senderId,
-      senderModel: senderType,
+      senderModel,
       content,
       contentType,
       metadata,
