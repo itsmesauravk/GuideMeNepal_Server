@@ -14,7 +14,7 @@ import './controllers/client/sub-controller/oauthlogin.controller.js';
 import { app } from './socket/socket.js';
 
 app.use(cors({
-    origin:["http://localhost:3000","http://localhost:3001"],
+    origin:["https://guidemenepal.vercel.app","http://localhost:3000","http://localhost:3001"],
     credentials:true
 }))
 
