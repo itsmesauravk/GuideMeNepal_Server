@@ -6,8 +6,8 @@ import { acceptCustomizeBookingGuide,
     addBulkDistrict, addSingleDistrict,
     cancelCustomizeBookingUser, completeBookingGuide,
 
-    createCustomizeBooking, createGuideReview, getAllDistricts, getAllNotification, getAllUsers,
-    getBookings, getOngoingBookings, getPopularDistricts,
+    createCustomizeBooking, createGuideReport, createGuideReview, getAllDistricts, getAllGuidesReports, getAllNotification, getAllUsers,
+    getBookings, getGuideReports, getOngoingBookings, getPopularDistricts,
         getSingleDistrict, markAllNotificationAsRead, markNotificationAsRead, rejectCustomizeBookingGuide 
     } from "../../controllers/common/index.js";
 import { getGuideReviews, getLatestGuideReviews } from "../../controllers/common/sub-controller/guideReviews.controller.js";
@@ -46,6 +46,11 @@ router.get("/latest-guide-reviews", getLatestGuideReviews)
 router.get("/all-notifications/:userId/:reciver", getAllNotification);
 router.patch("/mark-notification-as-read/:notificationId", markNotificationAsRead);
 router.patch("/mark-all-notification-as-read/:userId/:reciver", markAllNotificationAsRead);
+
+//report
+router.post("/create-guide-report", createGuideReport);
+router.get("/get-guide-reports/:guideId", getGuideReports);
+router.get("/get-all-guides-reports", getAllGuidesReports);
 
 
 export { router as commonRouter };

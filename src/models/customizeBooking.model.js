@@ -60,6 +60,10 @@ const CustomizeBooking = sequelize.define(
       type:DataTypes.BOOLEAN,
       defaultValue:false,
     },
+    reportstatus:{
+      type:DataTypes.BOOLEAN,
+      defaultValue:false,
+    },
 
     travelLoations: { type: DataTypes.JSON, defaultValue: null }, // Travel locations
 

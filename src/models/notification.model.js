@@ -22,7 +22,7 @@ const Notification = sequelize.define(
             allowNull: false,
         },
         notificationType: {
-            type: DataTypes.ENUM("auth", "booking", "trip", "review" ,"other"),
+            type: DataTypes.ENUM("auth", "booking", "trip", "review" ,"report","other"),
             allowNull: false,
         },
         isRead: {

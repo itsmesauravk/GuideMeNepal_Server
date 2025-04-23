@@ -15,7 +15,8 @@ import { createGuideReview,getGuideReviews, getLatestGuideReviews } from "./sub-
 //notification
 import { getAllNotification, markNotificationAsRead, markAllNotificationAsRead } from "./sub-controller/notification.controller.js";
 
-
+//report
+import { createGuideReport, getAllGuidesReports, getGuideReports } from "./sub-controller/reportGuide.controller.js";
 
 export {
     createCustomizeBooking,
@@ -46,4 +47,9 @@ export {
     getAllNotification,
     markNotificationAsRead,
     markAllNotificationAsRead,
+
+    //report
+    createGuideReport,
+    getAllGuidesReports,
+    getGuideReports,
 }
