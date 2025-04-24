@@ -177,7 +177,7 @@ const getSingleDistrict = asyncHandler(async (req, res) => {
 
     const district = await District.findOne({
         where: { slug },
-        attributes: ['id', 'name', 'slug', 'description', 'image']
+        attributes: ['id', 'name', 'slug', 'tags' ,'description', 'image']
     });
 
     district.increment('views');

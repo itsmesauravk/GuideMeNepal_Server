@@ -6,6 +6,8 @@ import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { ApiError } from "../../../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import GuideReview from "../../../models/guideReview.model.js";
+import Availability from "../../../models/availibility.model.js";
+import { or } from "sequelize";
 
 
 
@@ -40,10 +42,20 @@ const getSingleGuideDetails = asyncHandler(async (req, res) => {
         throw new ApiError(StatusCodes.NOT_FOUND, "Unable to find the guide");
     }
 
+      // Fetch availability for the specified guide
+        const availability_date = await Availability.findAll({
+            where: { guideId: guide.id },
+            order: [["startDate", "ASC"]],
+            attributes: ["id", "startDate", "endDate", "reason"],
+        });
+    
+        
+
     const resposeData = {
         ...guide.toJSON(),
         totalReviews,
         averageRating,
+        availability_date,
     }
 
     return res.status(StatusCodes.OK).json(

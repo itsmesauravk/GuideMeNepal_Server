@@ -1,4 +1,9 @@
-import { registerGuide, loginGuide, firstTimeLoginPasswordChange, getPopularGuides, getSingleGuideDetails, getGuides } from "../../controllers/guide/index.controller.js";
+import { 
+    registerGuide, loginGuide, firstTimeLoginPasswordChange, 
+    getPopularGuides, getSingleGuideDetails, getGuides, getGuideAvailability, 
+    updateGuideAvailability, createGuideAvailability 
+} from "../../controllers/guide/index.controller.js";
+
 import { Router } from "express";
 import { upload } from "../../middlewares/multer.middleware.js";
 import { getSingleRequest } from "../../controllers/admin/index.controller.js";
@@ -24,6 +29,11 @@ router.get("/get-single-request/:id", getSingleRequest);
 router.get("/get-popular-guides", getPopularGuides)
 router.get("/single-guide-details/:slug", getSingleGuideDetails)
 router.get("/get-guides", getGuides)
+
+// Availability routes
+router.get("/availability/:guideId", getGuideAvailability);
+router.post("/create-availability/:guideId", createGuideAvailability);
+router.put("/update-availability/:guideId/:availabilityId", updateGuideAvailability);
 
 
 // Export the router
