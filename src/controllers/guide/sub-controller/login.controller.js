@@ -12,6 +12,8 @@ const loginGuide = asyncHandler(async (req, res) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, "All fields are required");
     }
 
+    
+
     const guide = await Guide.findOne({ where: { email } }); // Query: SELECT * FROM Guide WHERE email = email
     if (!guide) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Guide not found");
@@ -40,6 +42,8 @@ const loginGuide = asyncHandler(async (req, res) => {
         // await guide.save();
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid Credentials");
     }
+
+
 
     // guide.securityMetadata.wrongPasswordCounter = 0;
     guide.lastActiveAt = new Date();
