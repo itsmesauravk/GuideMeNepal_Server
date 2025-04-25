@@ -55,6 +55,10 @@ const User = sequelize.define(
       type: DataTypes.DATE,
       defaultValue: null,
     },
+    verified:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     country:{
       type: DataTypes.STRING,
       defaultValue: null,
