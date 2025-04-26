@@ -1,7 +1,8 @@
 import { 
     registerGuide, loginGuide, firstTimeLoginPasswordChange, 
-    getPopularGuides, getSingleGuideDetails, getGuides, getGuideAvailability, 
-    updateGuideAvailability, createGuideAvailability 
+     getSingleGuideDetails, getGuides, getGuideAvailability, 
+    updateGuideAvailability, createGuideAvailability, 
+    getPopularAndNewGuides
 } from "../../controllers/guide/index.controller.js";
 
 import { Router } from "express";
@@ -26,7 +27,7 @@ router.get("/get-single-request/:id", getSingleRequest);
 
 
 // client side routes
-router.get("/get-popular-guides", getPopularGuides)
+router.get("/get-popular-new-guides", getPopularAndNewGuides)
 router.get("/single-guide-details/:slug", getSingleGuideDetails)
 router.get("/get-guides", getGuides)
 

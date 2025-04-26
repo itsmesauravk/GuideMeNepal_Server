@@ -4,7 +4,7 @@ import { firstTimeLoginPasswordChange } from "./sub-controller/updatePassword.co
 
 
 //client side guide controller
-import { getPopularGuides, getGuides } from "./sub-controller/getGuides.controller.js";
+import {  getPopularAndNewGuides,getGuides } from "./sub-controller/getGuides.controller.js";
 import { getSingleGuideDetails } from "./sub-controller/getSingleGuide.controller.js";
 
 //availability controller
@@ -15,7 +15,7 @@ import { getGuideAvailability, createGuideAvailability, updateGuideAvailability 
 export { registerGuide, loginGuide, firstTimeLoginPasswordChange ,
 
     //
-    getPopularGuides,
+    getPopularAndNewGuides,
     getSingleGuideDetails,
     getGuides,
 

@@ -127,6 +127,10 @@ const Guide = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    profileviews:{
+      type: DataTypes.INTEGER,
+      defaultValue:0
+    },
   },
   {
     timestamps: true,

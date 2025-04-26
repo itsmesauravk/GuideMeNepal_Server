@@ -6,7 +6,7 @@ import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { StatusCodes } from "http-status-codes";
 import Notification from "../../../models/notification.model.js";
 import { getReceiverSocketId, io } from "../../../socket/socket.js";
-import e from "cors";
+
 
 
 

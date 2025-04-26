@@ -42,6 +42,9 @@ const getSingleGuideDetails = asyncHandler(async (req, res) => {
         throw new ApiError(StatusCodes.NOT_FOUND, "Unable to find the guide");
     }
 
+    guide.profileviews += 1; // Increment profile views by 1
+    await guide.save(); 
+
       // Fetch availability for the specified guide
         const availability_date = await Availability.findAll({
             where: { guideId: guide.id },
