@@ -6,6 +6,8 @@ import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { StatusCodes } from "http-status-codes";
 import Notification from "../../../models/notification.model.js";
 import { getReceiverSocketId, io } from "../../../socket/socket.js";
+import jwt from "jsonwebtoken";
+import { passwordResetMail } from "../../../utils/MailSend.js";
 
 
 
@@ -88,7 +90,72 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
+const passwordReset = asyncHandler(async (req, res) => {    
+    const { email } = req.body;
+
+    if (!email) {
+        throw new ApiError(400, "Email is required");
+    }
+
+    // validating whether the user already exists
+    const existingUser = await User.findOne({ where: { email } });  // SQL Query : SELECT * FROM users WHERE email = email
+    if (!existingUser) {
+        throw new ApiError(409, "User not found");
+    }
+
+    //send reset password link to email
+    // generating token 
+    const token = jwt.sign({ id: existingUser.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "5m" });
+
+    //sending email
+    passwordResetMail(existingUser.email, token)
+
+
+    res.status(StatusCodes.ACCEPTED).json(new ApiResponse(StatusCodes.ACCEPTED, "Reset password link sent to your email", {
+       token: token,
+    }));
+
+
+});
+
+
+const passwordChange = asyncHandler(async(req, res) => {
+    const { password } = req.body;
+    const { token } = req.params;
+    if (!password) {
+        throw new ApiError(400, "Password is required");
+    }
+    if (!token) {
+        throw new ApiError(400, "Token is required");
+    }
+
+    // verifying token
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if (!decoded) {
+        throw new ApiError(400, "Invalid token");
+    }
+    const userId = decoded.id;
+    //finding user
+    const existingUser = await User.findOne({ where: { id: userId } });  // SQL Query : SELECT * FROM users WHERE email = email
+
+    if (!existingUser) {
+        throw new ApiError(409, "User not found");
+    }
+    // hashing password
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+    //updating password
+    existingUser.password = hashedPassword;
+    await existingUser.save();
+
+    //expiring token
+
+
+    res.status(StatusCodes.ACCEPTED).json(new ApiResponse(StatusCodes.ACCEPTED, "Password changed successfully", {}))
+
+    })
+
+
 
   
-  export {loginUser};
+  export {loginUser, passwordReset, passwordChange};
   
