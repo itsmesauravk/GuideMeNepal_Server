@@ -5,41 +5,45 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { ApiError } from "../../../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
+import GuideReview from "../../../models/guideReview.model.js";
 
 import { Op } from "sequelize";
-import CustomizeBooking from "../../../models/customizeBooking.model.js";
-import GuideReview from "../../../models/guideReview.model.js";
+
 import { sequelize } from "../../../db/ConnectDB.js";
 
 
 
-// const getPopularGuides = asyncHandler(async(req,res) =>{
-
-//     const popularGuides = await Guide.findAll({
-//         where: { verified: true },
-//         limit: 10,
-//         attributes: ["id", "fullname", "slug", "languageSpeak", "guidingAreas", "profilePhoto", "verified", "aboutMe"],
-//       });
-      
-
-//     if(popularGuides.length === 0 || !popularGuides){
-//         throw new ApiError(StatusCodes.NOT_FOUND, "No Guides Found")
-//     }
-
-//     return res.status(StatusCodes.OK).json(
-//         new ApiResponse(StatusCodes.OK, "Guides Found", popularGuides)
-//     )
-
-// })
-
 const getPopularAndNewGuides = asyncHandler(async (req, res) => {
-    // Get new guides - already implemented
-    const newGuides = await Guide.findAll({
-      where: { verified: true },
-      limit: 4,
-      order: [["createdAt", "DESC"]], 
-      attributes: ["id", "fullname", "slug", "languageSpeak", "guidingAreas", "profilePhoto", "verified", "aboutMe"],
-    });
+    
+    const guides = await Guide.findAll({
+        where: { verified: true },
+        limit: 4,
+        order: [["createdAt", "DESC"]], 
+        attributes: ["id", "fullname", "slug", "languageSpeak", "guidingAreas", "profilePhoto", "verified", "aboutMe"],
+      });
+      
+      // Create an array to store guides with their review stats
+      const newGuides = await Promise.all(guides.map(async (guide) => {
+        const guideReviews = await GuideReview.findAll({
+          where: { guideId: guide.id },
+        });
+        
+        let totalReviews = guideReviews.length;
+        let averageRating = totalReviews > 0 
+          ? guideReviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews 
+          : 0;
+        
+        // Return guide object with added review stats
+        return {
+          ...guide.get({ plain: true }),
+          totalReviews,
+          averageRating
+        };
+      }));
+
+   
+
+
   
     /* 
     For popular guides 
@@ -76,8 +80,8 @@ const getPopularAndNewGuides = asyncHandler(async (req, res) => {
         g."aboutMe",
         g.profileviews,
         COUNT(DISTINCT b.id) AS bookingcount,
-        COUNT(DISTINCT r.id) AS reviewcount,
-        COALESCE(AVG(r.rating), 0) AS averagerating,
+        COUNT(DISTINCT r.id) AS "totalReviews",
+        COALESCE(AVG(r.rating), 0) AS "averageRating",
         (COALESCE(AVG(r.rating), 0) * 3) + 
         (COUNT(DISTINCT b.id) * 2.5) + 
         (COUNT(DISTINCT r.id) * 1.5) + 

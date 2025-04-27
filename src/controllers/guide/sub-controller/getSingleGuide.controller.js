@@ -29,21 +29,31 @@ const getSingleGuideDetails = asyncHandler(async (req, res) => {
     const guide = await Guide.findOne({
         where: { slug },
         attributes: selectFields ? selectFields : { exclude: [...defaultExclude, ...excludeFields] }
-    });
+    })
+
+   
 
     const guideReviews = await GuideReview.findAll({
         where: { guideId: guide.id },
     });
 
-    const totalReviews = guideReviews.length;
-    const averageRating = guideReviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews || 0;
+    let totalReviews = 0;
+    let averageRating = 0;
+    if (guideReviews.length > 0) {
+        totalReviews = guideReviews.length;
+        averageRating = guideReviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews || 0;
+    }
 
     if (!guide) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Unable to find the guide");
     }
 
-    guide.profileviews += 1; // Increment profile views by 1
-    await guide.save(); 
+    if(guide.profilevies){
+
+        guide.profileviews += 1; // Increment profile views by 1
+        await guide.save(); 
+    }
+
 
       // Fetch availability for the specified guide
         const availability_date = await Availability.findAll({
