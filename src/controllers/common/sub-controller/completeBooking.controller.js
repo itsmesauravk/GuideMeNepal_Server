@@ -4,10 +4,11 @@ import District from "../../../models/district.model.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { ApiError } from "../../../utils/ApiError.js";
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from "http-status-codes";    
 import { Op } from "sequelize";
-import { getReceiverSocketId } from "../../../socket/socket.js";
+import { getReceiverSocketId, io } from "../../../socket/socket.js";
 import Notification from "../../../models/notification.model.js";
+
 
 
 
@@ -47,7 +48,7 @@ const completeBookingGuide = asyncHandler(async (req, res) => {
          
 
           // 6 - create a notification for the user and guide
-          const reciverSocketId = getReceiverSocketId(booking.guideId);
+          const reciverSocketId = getReceiverSocketId(booking.userId);
           const notification = await Notification.create({
               title: "Trip Completed",
               description: `Your trip has been completed. Now you can rate the guide`,

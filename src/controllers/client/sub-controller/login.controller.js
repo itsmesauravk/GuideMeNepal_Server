@@ -77,7 +77,7 @@ const loginUser = asyncHandler(async (req, res) => {
         io.to(reciverSocketId).emit("newNotification", notification)
     }
 
-    console.log(userData, "userData")
+    
 
 
     res.status(StatusCodes.ACCEPTED).json(new ApiResponse(StatusCodes.ACCEPTED, "Login Successfull", {
