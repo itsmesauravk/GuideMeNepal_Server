@@ -22,9 +22,13 @@ const getGuideAvailability = asyncHandler(async (req, res) => {
         attributes: ["id", "startDate", "endDate", "reason"],
     });
 
-    if (!availability || availability.length === 0) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "No availability found for this guide");
+    if ( availability.length === 0) {
+        return res.status(StatusCodes.OK).json(
+            new ApiResponse(StatusCodes.OK, "Guide availability not set", availability)
+        );
     }
+
+    
 
     return res.status(StatusCodes.OK).json(
         new ApiResponse(StatusCodes.OK, "Guide availability found", availability)
@@ -97,5 +101,24 @@ const updateGuideAvailability = asyncHandler(async (req, res) => {
 }
 );
 
+const deleteGuideAvailaibility = asyncHandler(async (req, res) => {
+    const {  availabilityId } = req.params; 
 
-export { getGuideAvailability, createGuideAvailability, updateGuideAvailability };
+  
+    // Check if the availability entry exists
+    const availability = await Availability.findOne({ where: { id: availabilityId } });
+    if (!availability) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Availability not found");
+    }
+
+    // Delete availability for the specified guide
+    await availability.destroy();
+
+    return res.status(StatusCodes.OK).json(
+        new ApiResponse(StatusCodes.OK, "Guide availability deleted")
+    );
+}
+);
+
+
+export { getGuideAvailability, createGuideAvailability, updateGuideAvailability, deleteGuideAvailaibility };

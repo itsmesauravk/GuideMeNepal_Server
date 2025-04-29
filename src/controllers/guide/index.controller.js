@@ -8,7 +8,7 @@ import {  getPopularAndNewGuides,getGuides } from "./sub-controller/getGuides.co
 import { getSingleGuideDetails } from "./sub-controller/getSingleGuide.controller.js";
 
 //availability controller
-import { getGuideAvailability, createGuideAvailability, updateGuideAvailability } from "./sub-controller/availability.controller.js";
+import { getGuideAvailability, createGuideAvailability, updateGuideAvailability, deleteGuideAvailaibility } from "./sub-controller/availability.controller.js";
 
 
 
@@ -22,5 +22,6 @@ export { registerGuide, loginGuide, firstTimeLoginPasswordChange ,
     //availability controller
     getGuideAvailability,
     createGuideAvailability,
-    updateGuideAvailability
+    updateGuideAvailability,
+    deleteGuideAvailaibility
 };

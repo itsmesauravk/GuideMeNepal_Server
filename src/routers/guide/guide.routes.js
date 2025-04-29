@@ -2,7 +2,8 @@ import {
     registerGuide, loginGuide, firstTimeLoginPasswordChange, 
      getSingleGuideDetails, getGuides, getGuideAvailability, 
     updateGuideAvailability, createGuideAvailability, 
-    getPopularAndNewGuides
+    getPopularAndNewGuides,
+    deleteGuideAvailaibility
 } from "../../controllers/guide/index.controller.js";
 
 import { Router } from "express";
@@ -35,6 +36,7 @@ router.get("/get-guides", getGuides)
 router.get("/availability/:guideId", getGuideAvailability);
 router.post("/create-availability/:guideId", createGuideAvailability);
 router.put("/update-availability/:guideId/:availabilityId", updateGuideAvailability);
+router.delete("/delete-availability/:availabilityId", deleteGuideAvailaibility);
 
 
 // Export the router
