@@ -2,7 +2,7 @@ import { Message } from '../../../models/message.model.js';
 import { Conversation, Participant } from '../../../models/conversation.model.js';
 import User from '../../../models/user.model.js';
 import Guide from '../../../models/guide.model.js';
-import { DataTypes, Op } from 'sequelize';
+import { DataTypes, Op, or } from 'sequelize';
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { ApiError } from "../../../utils/ApiError.js";
@@ -16,8 +16,6 @@ const getAllConversationUsers = asyncHandler(async (req, res) => {
     const participantId = parseInt(userId);
     const participantModel = userType; // 'User' or 'Guide'
 
-    console.log("participantId", participantId)
-    console.log("participantModel", participantModel)
     
     // Find all conversations where the user is a participant
     const conversations = await Conversation.findAll({
@@ -31,11 +29,12 @@ const getAllConversationUsers = asyncHandler(async (req, res) => {
                 },
                 required: true
             }
-        ]
+        ],
+        order: [['updatedAt', 'DESC']], // Order by last updated time
     });
     
     if (!conversations || conversations.length === 0) {
-        return ApiResponse.success(res, StatusCodes.OK, "No conversations found", []);
+        return res.status(StatusCodes.OK).json(new ApiResponse(StatusCodes.OK, "No conversations found", []));
     }
     
     const conversationIds = conversations.map(conv => conv.id);
