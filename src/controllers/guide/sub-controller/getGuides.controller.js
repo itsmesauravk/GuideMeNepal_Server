@@ -16,7 +16,7 @@ import { sequelize } from "../../../db/ConnectDB.js";
 const getPopularAndNewGuides = asyncHandler(async (req, res) => {
     
     const guides = await Guide.findAll({
-        where: { verified: true },
+        where: { verified: true , "availability.isActivate":true, "securityMetadata.isSuspended":false },
         limit: 4,
         order: [["createdAt", "DESC"]], 
         attributes: ["id", "fullname", "slug", "languageSpeak", "guidingAreas", "profilePhoto", "verified", "aboutMe"],
@@ -79,6 +79,8 @@ const getPopularAndNewGuides = asyncHandler(async (req, res) => {
         g.verified, 
         g."aboutMe",
         g.profileviews,
+        g.availability,
+        g."securityMetadata",
         COUNT(DISTINCT b.id) AS bookingcount,
         COUNT(DISTINCT r.id) AS "totalReviews",
         COALESCE(AVG(r.rating), 0) AS "averageRating",
@@ -94,6 +96,9 @@ const getPopularAndNewGuides = asyncHandler(async (req, res) => {
         guide_reviews r ON g.id = r."guideId"
     WHERE 
         g.verified = true
+        AND (g.availability->>'isActivate')::boolean = true
+        AND (g."securityMetadata"->>'isSuspended')::boolean = false
+       
     GROUP BY 
         g.id
     ORDER BY 
@@ -112,10 +117,12 @@ const getPopularAndNewGuides = asyncHandler(async (req, res) => {
     );
   });
 
+
+
 const getGuides = asyncHandler(async (req, res) => {
     const { guidingArea } = req.query; 
 
-    const whereCondition = { verified: true };
+    const whereCondition = { verified: true , "availability.isActivate":true, "securityMetadata.isSuspended":false  };
 
     // Apply filtering if guidingArea is provided
     if (guidingArea) {

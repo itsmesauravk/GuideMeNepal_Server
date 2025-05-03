@@ -15,6 +15,8 @@ import { or } from "sequelize";
 const getSingleGuideDetails = asyncHandler(async (req, res) => {
     const slug = req.params.slug;
 
+   
+
     if (!slug) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Slug is required");
     }
@@ -27,27 +29,34 @@ const getSingleGuideDetails = asyncHandler(async (req, res) => {
     const defaultExclude = ["password", "refreshToken", "registrationStatus", "firstTimeLogin", "securityMetadata", "otp"];
 
     const guide = await Guide.findOne({
-        where: { slug },
+        where: {slug:slug,verified: true , "availability.isActivate":true, "securityMetadata.isSuspended":false },
         attributes: selectFields ? selectFields : { exclude: [...defaultExclude, ...excludeFields] }
     })
 
-   
+    if (!guide) {
+        return res.status(StatusCodes.OK).json(
+            new ApiResponse(StatusCodes.OK, "Guide Not Found", guide )
+        );
+    }
 
-    const guideReviews = await GuideReview.findAll({
-        where: { guideId: guide.id },
-    });
+
+    let  guideReviews;
+
+    if (guide) {
+        guideReviews = await GuideReview.findAll({
+            where: { guideId: guide.id },
+        });
+
+    }
 
     let totalReviews = 0;
     let averageRating = 0;
-    if (guideReviews.length > 0) {
+    if (guideReviews && guideReviews.length > 0) {
         totalReviews = guideReviews.length;
         averageRating = guideReviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews || 0;
     }
 
-    if (!guide) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Unable to find the guide");
-    }
-
+   
     if(guide.profilevies){
 
         guide.profileviews += 1; // Increment profile views by 1

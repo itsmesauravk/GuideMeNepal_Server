@@ -10,6 +10,10 @@ import { getSingleGuideDetails } from "./sub-controller/getSingleGuide.controlle
 //availability controller
 import { getGuideAvailability, createGuideAvailability, updateGuideAvailability, deleteGuideAvailaibility } from "./sub-controller/availability.controller.js";
 
+//profile update
+
+import { getGuideProfileFullDetails, updateGuideProfile } from "./sub-controller/profileUpdate.controller.js";
+
 
 
 export { registerGuide, loginGuide, firstTimeLoginPasswordChange ,
@@ -23,5 +27,10 @@ export { registerGuide, loginGuide, firstTimeLoginPasswordChange ,
     getGuideAvailability,
     createGuideAvailability,
     updateGuideAvailability,
-    deleteGuideAvailaibility
+    deleteGuideAvailaibility,
+
+
+    //profile update
+    getGuideProfileFullDetails,
+    updateGuideProfile
 };

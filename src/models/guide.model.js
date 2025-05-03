@@ -78,7 +78,6 @@ const Guide = sequelize.define(
     guidingAreas:{
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull:false,
-      
     },
     selfVideo:{
       type: DataTypes.STRING,
@@ -102,14 +101,14 @@ const Guide = sequelize.define(
       defaultValue: {
         lastPassword: null,
         wrongPasswordCounter: 0,
-        isSuspended: false,
+        isSuspended: false,   // this is controlled by admin (whether the guide is suspended or not)
       },
     },
     availability: {
       type: DataTypes.JSONB, 
       defaultValue: {
-        isActivate: true,
-        isAvailable: true,
+        isActivate: true,  //this is controlled by guide (whether he wants to be shown in the app or not)
+        isAvailable: true,  // this is when when the guide is available for booking or not
       },
     },
     lastActiveAt: {

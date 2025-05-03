@@ -43,7 +43,7 @@ const registerGuide = asyncHandler(async (req, res) => {
         liscenseURL = uploadResponse?.secure_url || null;
     }
     if (profilePhoto) {
-        const uploadResponse = await uploadOnCloudinary(profilePhoto, "/guide-details/certificates");
+        const uploadResponse = await uploadOnCloudinary(profilePhoto, "/guide-details/profile");
         profileURL = uploadResponse?.secure_url || null;
     }
     if (selfVideo) {
