@@ -89,11 +89,11 @@ const Guide = sequelize.define(
       allowNull:false,
     },
     experiences:{
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      default:null
+      type: DataTypes.ARRAY(DataTypes.TEXT),
+      defaultValue:null
     },
     gallery:{
-      type: DataTypes.ARRAY(DataTypes.STRING),
+      type: DataTypes.ARRAY(DataTypes.TEXT),
       default:null
     },
 
