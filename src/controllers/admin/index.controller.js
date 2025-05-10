@@ -6,6 +6,13 @@ import { getUsers } from "./sub-controller/viewUsers.controller.js";
 
 import { login, logout } from "./sub-controller/login.controller.js";
 
+import { guideSuspension } from "./sub-controller/suspend.controller.js";
+
+import { getAllAnalyticsData } from "./sub-controller/analytics.controller.js";
+
+
+import { getDashboardData } from "./sub-controller/dashboard.controller.js";
+
 export {
     registerAdmin,
     getRegistrationRequest,
@@ -15,5 +22,11 @@ export {
     login,
     logout,
     getUsers,
+
+    guideSuspension,
+
+    getAllAnalyticsData,
+
+    getDashboardData
  
 }
