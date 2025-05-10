@@ -5,7 +5,8 @@ import {
     getPopularAndNewGuides,
     deleteGuideAvailaibility,
     getGuideProfileFullDetails,
-    updateGuideProfile
+    updateGuideProfile,
+    getDashboardData
 } from "../../controllers/guide/index.controller.js";
 
 import { Router } from "express";
@@ -44,6 +45,9 @@ router.delete("/delete-availability/:availabilityId", deleteGuideAvailaibility);
 //profile update
 router.get("/get/:guideId", getGuideProfileFullDetails)
 router.put("/update/:guideId", fileUpload, updateGuideProfile);
+
+//dashboard
+router.get("/dashboard/:guideId", getDashboardData);
 
 
 // Export the router

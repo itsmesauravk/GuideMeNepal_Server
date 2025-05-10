@@ -15,6 +15,10 @@ import { getGuideAvailability, createGuideAvailability, updateGuideAvailability,
 import { getGuideProfileFullDetails, updateGuideProfile } from "./sub-controller/profileUpdate.controller.js";
 
 
+//dashboard
+import { getDashboardData } from "./sub-controller/dashboard.controller.js";
+
+
 
 export { registerGuide, loginGuide, firstTimeLoginPasswordChange ,
 
@@ -32,5 +36,8 @@ export { registerGuide, loginGuide, firstTimeLoginPasswordChange ,
 
     //profile update
     getGuideProfileFullDetails,
-    updateGuideProfile
+    updateGuideProfile,
+
+    //dashboard
+    getDashboardData
 };

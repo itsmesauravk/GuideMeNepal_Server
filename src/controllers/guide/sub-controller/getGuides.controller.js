@@ -1,4 +1,4 @@
-// i am making this temproraly for showing the guides in the client side ( i will updat this later)
+
 
 import Guide from "../../../models/guide.model.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
