@@ -51,11 +51,13 @@ const ReportGuide = sequelize.define(
 );
 
 // Define the relationship with User model
-ReportGuide.belongsTo(User, { foreignKey: "userId" });
-User.hasMany(ReportGuide, { foreignKey: "userId" });
+ReportGuide.belongsTo(User, { foreignKey: "userId", as: "user" });
+User.hasMany(ReportGuide, { foreignKey: "userId", as: "reports" });
 
 // Define the relationship with Guide model
-ReportGuide.belongsTo(Guide, { foreignKey: "guideId" });
-Guide.hasMany(ReportGuide, { foreignKey: "guideId" });
+ReportGuide.belongsTo(Guide, { foreignKey: "guideId", as: "guide" });
+Guide.hasMany(ReportGuide, { foreignKey: "guideId", as: "reports" });
+
+
 
 export default ReportGuide;
