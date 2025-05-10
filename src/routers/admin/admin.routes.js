@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, registerAdmin, getRegistrationRequest,verifyRequest, logout, getGuides, getUsers } from '../../controllers/admin/index.controller.js';
+import { login, registerAdmin, getRegistrationRequest,verifyRequest, logout, getGuides, getUsers, guideSuspension, getAllAnalyticsData, getDashboardData } from '../../controllers/admin/index.controller.js';
 
 import { upload } from '../../middlewares/multer.middleware.js';
 
@@ -30,6 +30,14 @@ router.get("/registration-request",upload.fields(uploadFiles) ,getRegistrationRe
 router.patch("/verify-request/:id", verifyRequest);
 router.get("/view-guides",getGuides);
 router.get("/view-users",getUsers)
+
+router.post("/guide-suspension",guideSuspension)
+
+
+router.get("/analytics", getAllAnalyticsData)
+
+
+router.get("/dashboard", getDashboardData)
 
 
 

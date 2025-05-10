@@ -142,10 +142,11 @@ import { sequelize } from "../../../db/ConnectDB.js";
 const getNotifications = async (guideId) => {
   // Fetch notifications from the database
   const notifications = await Notification.findAll({
-    where: { guideId: guideId },
+    where: { guideId: guideId, reciver: "guide" },
     order: [["createdAt", "DESC"]],
     limit: 3,
   });
+
 
   return notifications;
 };
@@ -229,6 +230,14 @@ const guideReviews = await GuideReview.findAll({
     },
   });
 
+  //for unread count
+  const unreadCount = await Notification.count({
+    where: { guideId: guideId,
+        reciver: "guide",
+         isRead: false },
+  });
+
+
   // Get notifications and booking requests
   const notifications = await getNotifications(guideId);
   const bookingRequests = await getBookingRequests(guideId);
@@ -242,6 +251,7 @@ const guideReviews = await GuideReview.findAll({
       averageRating: averageRating || 0,
       totalEarnings: totalEarnings || 0,
       totalRequests: totalRequests || 0,
+      unreadNotifications: unreadCount || 0,
     },
     ongoingTrip,
     notifications,

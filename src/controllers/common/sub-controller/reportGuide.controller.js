@@ -112,15 +112,15 @@ const getGuideReports = asyncHandler(async (req, res) => {
             as: "user",
             attributes: ["fullName", "profilePicture"],
         },
-    ],
-});
+      ],
+  });
 
-const totalReports = guideReport.length;
-const averageRating = guideReport.reduce((acc, review) => acc + review.rating, 0) / totalReports || 0;
+  const totalReports = guideReport.length;
 
-return res.status(StatusCodes.OK).json(
-    new ApiResponse(StatusCodes.OK, "Guide reviews fetched successfully", { reviews:guideReport, total:totalReviews, average:averageRating })
-);
+
+  return res.status(StatusCodes.OK).json(
+      new ApiResponse(StatusCodes.OK, "Guide reviews fetched successfully", { reviews:guideReport, total:totalReports })
+  );
 
 })
 
@@ -131,6 +131,11 @@ const getAllGuidesReports = asyncHandler(async (req, res) => {
   const guideReports = await ReportGuide.findAndCountAll({
     order: [['createdAt', 'DESC']],
     include: [
+        {
+            model: Guide,
+            as: "guide",
+            attributes: ["fullname", "profilePhoto"],
+        },
         {
             model: User,
             as: "user",
