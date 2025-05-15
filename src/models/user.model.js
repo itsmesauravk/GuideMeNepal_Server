@@ -37,7 +37,7 @@ const User = sequelize.define(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     profilePicture:{
       type:DataTypes.STRING,
@@ -62,6 +62,16 @@ const User = sequelize.define(
     country:{
       type: DataTypes.STRING,
       defaultValue: null,
+    },
+    // OAuth specific fields
+    providerId: {
+      type: DataTypes.STRING, // ID from the OAuth provider (Google, Facebook)
+      allowNull: true,
+    },
+    provider: {
+      type: DataTypes.STRING, 
+      enum: ['google', 'facebook', 'credentiales', null],
+      allowNull: true,
     },
     authMethod: {
       type: DataTypes.ENUM("email", "google", "facebook"),
