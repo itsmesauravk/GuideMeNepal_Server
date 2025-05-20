@@ -452,7 +452,7 @@ const verifyEmailMail = async (email, token) => {
 );
 };
 
-const passwordResetMail = async (email, token) => {
+const passwordResetMail = async (email, token, user) => {
   const mailOptions = {
     from: `Guide Me Nepal <${process.env.NODE_MAILER_EMAIL}>`,
     to: email,
@@ -538,7 +538,7 @@ const passwordResetMail = async (email, token) => {
             <p>We received a request to reset your password. To proceed, please click the button below. If you did not request a password reset, you can safely ignore this email.</p>
             
             <div class="button-wrapper">
-              <a href="${process.env.CLIENT_URL}/reset-password?t=${token}" class="button">Reset Password</a>
+              <a href="${process.env.CLIENT_URL}/reset-password?t=${token}&u=${user}" class="button">Reset Password</a>
             </div>
             
             <p>This link will expire in 5 min for your security.</p>

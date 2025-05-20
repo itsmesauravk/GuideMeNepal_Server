@@ -138,4 +138,22 @@ const getOngoingBookings = asyncHandler(async(req, res) => {
     );
 });
 
-export { getBookings, getOngoingBookings }
+
+// this is for admin purpose
+const getAllBookings = asyncHandler(async(req,res) => {
+    const bookings = await CustomizeBooking.findAll({
+        include: [{
+            model: User,
+            attributes: ['id', 'slug', 'fullName', 'email', 'profilePicture'] 
+        },{
+            model: Guide,
+            attributes: ['id', 'slug', 'fullname', 'email', 'profilePhoto'] 
+        }]
+    });
+
+    return res.status(StatusCodes.OK).json(
+        new ApiResponse(StatusCodes.OK, "Bookings", bookings)
+    );
+});
+
+export { getBookings, getOngoingBookings, getAllBookings }

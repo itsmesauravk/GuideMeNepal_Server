@@ -1,4 +1,5 @@
 import User from "../../../models/user.model.js";
+import Guide from "../../../models/guide.model.js";
 import bcryptjs from "bcryptjs";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/ApiError.js";
@@ -8,6 +9,7 @@ import Notification from "../../../models/notification.model.js";
 import { getReceiverSocketId, io } from "../../../socket/socket.js";
 import jwt from "jsonwebtoken";
 import { passwordResetMail } from "../../../utils/MailSend.js";
+
 
 
 
@@ -90,25 +92,51 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
+
+//for both user and guide
 const passwordReset = asyncHandler(async (req, res) => {    
     const { email } = req.body;
+    const {user} = req.query;
+
+    if (!user) {
+        throw new ApiError(401, "User is required");
+    }
 
     if (!email) {
         throw new ApiError(400, "Email is required");
     }
 
-    // validating whether the user already exists
-    const existingUser = await User.findOne({ where: { email } });  // SQL Query : SELECT * FROM users WHERE email = email
+    let existingUser = null;
+    let token = null;
+
+    if(user==="client"){
+        // validating whether the user already exists
+        existingUser = await User.findOne({ where: { email } });  // SQL Query : SELECT * FROM users WHERE email = email
+        
+        
+    }else if(user==="guide"){
+        existingUser = await Guide.findOne({ where: { email } });  // SQL Query : SELECT * FROM guides WHERE email = email
+
+    }else{
+        throw new ApiError(400, "Invalid user type");
+    }
+
     if (!existingUser) {
         throw new ApiError(409, "User not found");
     }
 
+    if(!existingUser.verified){
+        throw new ApiError(403, "User is not verified yet");
+    }
+
     //send reset password link to email
+   
     // generating token 
-    const token = jwt.sign({ id: existingUser.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "5m" });
+    token = jwt.sign({ id: existingUser.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "5m" });
+
 
     //sending email
-    passwordResetMail(existingUser.email, token)
+    passwordResetMail(existingUser.email, token, user);
 
 
     res.status(StatusCodes.ACCEPTED).json(new ApiResponse(StatusCodes.ACCEPTED, "Reset password link sent to your email", {
@@ -122,6 +150,10 @@ const passwordReset = asyncHandler(async (req, res) => {
 const passwordChange = asyncHandler(async(req, res) => {
     const { password } = req.body;
     const { token } = req.params;
+    const {user} = req.query;
+    if (!user) {
+        throw new ApiError(401, "User is required");
+    }
     if (!password) {
         throw new ApiError(400, "Password is required");
     }
@@ -135,8 +167,17 @@ const passwordChange = asyncHandler(async(req, res) => {
         throw new ApiError(400, "Invalid token");
     }
     const userId = decoded.id;
+    let existingUser = null;
     //finding user
-    const existingUser = await User.findOne({ where: { id: userId } });  // SQL Query : SELECT * FROM users WHERE email = email
+    if(user==="client"){
+        // validating whether the user already exists
+    existingUser = await User.findOne({ where: { id: userId } });  // SQL Query : SELECT * FROM users WHERE email = email
+    }else if(user==="guide"){
+        existingUser = await Guide.findOne({ where: { id: userId } });  // SQL Query : SELECT * FROM guides WHERE email = email
+    }
+    else{
+        throw new ApiError(400, "Invalid user type");
+    }
 
     if (!existingUser) {
         throw new ApiError(409, "User not found");

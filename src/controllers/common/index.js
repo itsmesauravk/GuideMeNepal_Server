@@ -1,5 +1,5 @@
 import { createCustomizeBooking, cancelCustomizeBookingUser, rejectCustomizeBookingGuide, acceptCustomizeBookingGuide } from "./sub-controller/booking.controller.js";
-import { getBookings, getOngoingBookings } from "./sub-controller/getBookings.controller.js";
+import { getBookings, getOngoingBookings, getAllBookings } from "./sub-controller/getBookings.controller.js";
 import { getAllUsers } from "./sub-controller/getAllUsers.controller.js";
 
 //districts
@@ -52,4 +52,7 @@ export {
     createGuideReport,
     getAllGuidesReports,
     getGuideReports,
+
+    //admin
+    getAllBookings,
 }

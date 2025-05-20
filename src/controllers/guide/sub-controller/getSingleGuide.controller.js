@@ -57,7 +57,7 @@ const getSingleGuideDetails = asyncHandler(async (req, res) => {
     }
 
    
-    if(guide.profilevies){
+    if(guide.profileviews){
 
         guide.profileviews += 1; // Increment profile views by 1
         await guide.save(); 
