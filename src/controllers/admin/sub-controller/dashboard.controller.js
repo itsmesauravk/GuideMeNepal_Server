@@ -49,7 +49,7 @@ const getDashboardData = asyncHandler(async (req, res) => {
     const responseData = {
         metrices:{
             totalUsers,
-            totalGuides,
+            totalGuides:totalGuides -1,
             totalBookings,
             totalEarnings: totalRevenue,  
         },
